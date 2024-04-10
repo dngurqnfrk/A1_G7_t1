@@ -67,22 +67,33 @@ public class A1_G7_t1 {
 
 
             for (int k=2; Lk.size() != 0; k++) {
+                System.out.println(k);
                 List<List<String>> Ck;
+                // Ck.clear();
                 Ck = apriori_gen(Lk);
+                // System.out.println("ok1 "+C.size());
                 // System.out.println("Ck "+k);
                 // for (List<String> e : Ck) {
                 //     System.out.println(e);
                 // }
                 // System.out.println("\n");
                 // t 가 Ck에 존재하는 지 확인
-                for (List<String> transaction : transactions) {
-                    for (List<String> e : Ck) {
+                System.out.println("size: "+Ck.size());
+                for (List<String> e : Ck) {
+                    int cnt=0;
+                    // System.out.println(e);
+                    for (List<String> transaction : transactions) {
                         if (transaction.containsAll(e)) {
+                            cnt++;
+                            // C.put(e,C.getOrDefault(e, 0)+1);
+                            // System.out.println(cnt);
                             // System.out.println("Ck: "+e);
-                            C.put(e, C.getOrDefault(e, 0) + 1);
+                            // System.out.println("C in: "+e+" "+C.get(e));
                         }
                     }
+                    C.put(e, cnt);
                 }
+                // System.out.println("ok2 "+C.size());
                 // count of c in Ck > minsup => Ct_1
                 // ==> Lk = Ct_1
                 Lk.clear();
@@ -91,10 +102,12 @@ public class A1_G7_t1 {
                     // System.out.println(e.getKey()+" "+sup);
                     if (sup >= minsup) {
                         Lk.add(e.getKey());
+                        System.out.println("key: "+e.getKey()+" "+sup+" "+e.getValue());
                         L.put(e.getKey(), e.getValue());
                         // System.out.println(e.getKey()+" "+ e.getValue()+" "+sup);
                     }
                 }
+                // System.out.println("ok3");
                 // for (List<String> e : Lk) {
                 //     System.out.println(e);
                 // }
@@ -130,48 +143,62 @@ public class A1_G7_t1 {
                 List<String> itemList2 = Lk.get(j);
                 List<String> intersection = new ArrayList<>();
                 int cnt=0;
-                for (int l=0; l<itemList1.size(); l++) {
-                    String s1 = itemList1.get(l);
-                    String s2 = itemList2.get(l);
-                    if (s1.equals(s2))
-                        intersection.add(s1);
-                    else {
+                int l1=0,l2=0;
+                boolean add = true;
+                // System.out.println("--");
+                while(l1<itemList1.size() && l2<itemList2.size()) {
+                    // System.out.println(l1+" "+l2);
+                    String s1 = itemList1.get(l1);
+                    String s2 = itemList2.get(l2);
+                    int sub = l1-l2;
+                    if (sub<-1 || sub>1) {
+                        add = false;
+                        break;
+                    }
+                    if (s1.equals(s2)) {
                         cnt++;
-                        if (s1.compareTo(s2) <= 0) {
-                            intersection.add(s1);
+                        intersection.add(s1);
+                        l1++;
+                        l2++;
+                    }
+                    else {
+                        if (l2+1<itemList2.size() && s1.equals(itemList2.get(l2+1))) {
                             intersection.add(s2);
+                            l2++;
+                        }
+                        else if (l1+1<itemList1.size() && s2.equals(itemList1.get(l1+1))) {
+                            intersection.add(s1);
+                            l1++;
                         }
                         else {
-                            intersection.add(s2);
-                            intersection.add(s1);
+                            
+                            if (s1.compareTo(s2) <= 0) {
+                                intersection.add(s1);
+                                intersection.add(s2);
+                            }
+                            else {
+                                intersection.add(s2);
+                                intersection.add(s1);
+                            }
+                            l1++;
+                            l2++;
                         }
                     }
                 }
-                if (cnt != 1)
-                    intersection.clear();
-                else
+                if (add && cnt == itemList1.size()-1) {
+                    // System.out.println(l1+" "+l2);
+                    // System.out.println("----");
+                    // for (String e:intersection)
+                    //     System.out.println(e);
+                    // System.out.println("-----");
+                    if (l1>l2)
+                        intersection.add(itemList2.get(l2));
+                    else if (l1<l2)
+                        intersection.add(itemList1.get(l1));
                     C_out.add(intersection);
-                // intersection.retainAll(itemList2);
-                // if (intersection.size() == itemList1.size() - 1) {
-                //     String s1 = itemList1.get(itemList1.size()-1);
-                //     String s2 = itemList2.get(itemList2.size()-1);
-                //     for (String e: itemList1) {
-                //         System.out.println("item1: "+e);
-                //     }
-                //     for (String e: intersection) {
-                //         System.out.println("in: "+e+" "+s1+" "+s2);
-                //     }
-                //     System.out.println("\n");
-                //     if (s1.compareTo(s2) <= 0) {
-                //         intersection.add(s1);
-                //         intersection.add(s2);
-                //     }
-                //     else {
-                //         intersection.add(s2);
-                //         intersection.add(s1);
-                //     }
-                //     C_out.add(intersection);
-                // }
+                }
+                else
+                    intersection.clear();
             }
         }
         return C_out;
