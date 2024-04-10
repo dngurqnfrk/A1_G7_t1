@@ -56,12 +56,12 @@ public class A1_G7_t1 {
 
 
             for (int k=2; Lk.size() != 0; k++) {
-                System.out.println(k);
+                // System.out.println(k);
                 List<List<String>> Ck;
                 // Ck.clear();
                 Ck = apriori_gen(Lk);
                 // t 가 Ck에 존재하는 지 확인
-                System.out.println("size: "+Ck.size());
+                // System.out.println("size: "+Ck.size());
                 for (List<String> e : Ck) {
                     int cnt=0;
                     // System.out.println(e);
