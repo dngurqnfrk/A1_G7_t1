@@ -25,7 +25,7 @@ public class A1_G7_t1 {
             Integer item_num = 0;
             while ((line = br.readLine()) != null) {
                 N++;
-                tokens = line.strip().split(",");
+                tokens = line.split(",");
                 transactions.add(Arrays.asList(tokens));
             }
             br.close();
